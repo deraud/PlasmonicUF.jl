@@ -6,6 +6,7 @@ using ..Struct_MRT3
 using ..Constants_MRT3
 
 export mrt_collision!, streaming!, calculate_macro!
+export mrt_collision3!
 
 function mrt_collision!(lb::Lattice)
     Threads.@threads for i in 1:Nx 
@@ -57,6 +58,69 @@ function mrt_collision!(lb::Lattice)
                 lb.f[i, j, k] = 0.0
                 for l in 1:Q
                     lb.f[i, j, k] += Minv[k, l] * m_post[l]
+                end
+            end
+        end
+    end
+end
+
+function mrt_collision3!(lb::Lattice)
+    Threads.@threads for i in 1:Nx 
+        for j in 1:Ny
+            # Add force effect to velocity (half time step)
+            ux_eff = lb.u[i, j] + 0.5 * lb.Fx[i, j] / lb.ρ[i, j]
+            uy_eff = lb.v[i, j] + 0.5 * lb.Fy[i, j] / lb.ρ[i, j]
+            
+            # Transform to moment space
+            m = zeros(Q)
+            for k in 1:Q
+                for l in 1:Q
+                    m[k] += M[k, l] * lb.f[i, j, l]
+                end
+            end
+
+            # Calculate equilibrium moments
+            usqr = ux_eff^2 + uy_eff^2
+            meq = zeros(Q)
+            meq[1] = lb.ρ[i, j]
+            meq[2] = -2*lb.ρ[i, j] + 3*lb.ρ[i, j]*usqr
+            meq[3] = lb.ρ[i, j] - 3*lb.ρ[i, j]*usqr
+            meq[4] = lb.ρ[i, j]*ux_eff
+            meq[5] = -lb.ρ[i, j]*ux_eff
+            meq[6] = lb.ρ[i, j]*uy_eff
+            meq[7] = -lb.ρ[i, j]*uy_eff
+            meq[8] = lb.ρ[i, j]*(ux_eff^2 - uy_eff^2)
+            meq[9] = lb.ρ[i, j]*ux_eff*uy_eff
+
+            # Forcing term in moment space (Guo et al. 2002)
+            F_dot_u = lb.Fx[i, j]*ux_eff + lb.Fy[i, j]*uy_eff
+            Fm = zeros(Q)
+            Fm[1] = 0.0
+            Fm[2] = 6.0 * F_dot_u
+            Fm[3] = -6.0 * F_dot_u
+            Fm[4] = lb.Fx[i, j]
+            Fm[5] = -lb.Fx[i, j]
+            Fm[6] = lb.Fy[i, j]
+            Fm[7] = -lb.Fy[i, j]
+            Fm[8] = 2.0 * (lb.Fx[i, j]*ux_eff - lb.Fy[i, j]*uy_eff)
+            Fm[9] = lb.Fx[i, j]*uy_eff + lb.Fy[i, j]*ux_eff
+
+            # Collision in moment space with forcing
+            Fm_scaled = (1.0 .- 0.5 .* s) .* Fm
+            m_post = m - s .* (m - meq) + Fm_scaled
+
+            # 3rd Order MRT correction
+            Qm = zeros(Q)
+            Qm[1] = 3*(k1 + k2)*(lb.Fx[i,j]^2 + lb.Fy[i,j]^2) / (G * lb.Ψ[i,j]^2 * c^2)
+            Qm[7] = k1 * (lb.Fx[i,j]^2 - lb.Fy[i,j]^2) / (G * lb.Ψ[i,j]^2 * c^2)
+            Qm[8] = k1 * (lb.Fx[i,j]*lb.Fy[i,j]) / (G * lb.Ψ[i,j]^2 * c^2)
+            Qm_scaled = s .* Qm
+
+            # Transform back to velocity space
+            for k in 1:Q
+                lb.f[i, j, k] = 0.0
+                for l in 1:Q
+                    lb.f[i, j, k] += Minv[k, l] * m_post[l] + Qm_scaled[l]
                 end
             end
         end
