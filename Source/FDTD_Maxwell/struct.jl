@@ -1,4 +1,4 @@
-include("./const.jl")
+include("././const.jl")
 
 module StructsMaxwell
 

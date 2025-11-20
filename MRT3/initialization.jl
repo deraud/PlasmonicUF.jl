@@ -11,8 +11,8 @@ function initialize!(lb::Lattice)
     cx, cy = Nx÷2, Ny÷2
     radius = min(Nx, Ny) ÷ 6
     
-    ρ_liquid = 2.0 * ρ0  # High density liquid phase
-    ρ_vapor = 0.3 * ρ0   # Low density vapor phase
+    ρ_liquid = 7.2 * ρ0  # High density liquid phase
+    ρ_vapor = 0.2 * ρ0   # Low density vapor phase
     interface_width = 3.0  # Width of interface transition
     
     for i in 1:Nx, j in 1:Ny

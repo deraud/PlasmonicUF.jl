@@ -2,23 +2,27 @@ module Constants_MRT3
 
 using StaticArrays
 
-export Q, ex, ey, w, M, Minv, ρ0, G, τ, s
+export Q, ex, ey, w, M, Minv, ρ0, G, τ, s, k1, k2, c
 
 const Q::Int = 9
 const ex = [0, 1, 0, -1, 0, 1, -1, -1, 1]
 const ey = [0, 0, 1, 0, -1, 1, 1, -1, -1]
 const w = [4/9, 1/9, 1/9, 1/9, 1/9, 1/36, 1/36, 1/36, 1/36]
+const c::Float64 = 1.0
+
+const k1 = 0
+const k2 = 0
 
 const M = [
         1  1  1  1  1  1  1  1  1;
-        -4 -1 -1 -1 -1  2  2  2  2;
+       -4 -1 -1 -1 -1  2  2  2  2;
         4 -2 -2 -2 -2  1  1  1  1;
         0  1  0 -1  0  1 -1 -1  1;
         0 -2  0  2  0  1 -1 -1  1;
         0  0  1  0 -1  1  1 -1 -1;
         0  0 -2  0  2  1  1 -1 -1;
         0  1 -1  1 -1  0  0  0  0;
-        0  0  0  0  0  1 -1  1 -1
+        0  0  0  0  0  1 -1  1 -1;
     ]
 
 const Minv = inv(M)

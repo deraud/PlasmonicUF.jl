@@ -50,7 +50,7 @@ function run_sim!(lb::MRT3.Struct_MRT3.Lattice, Nt::Integer, NtScale::Integer;
     for t in itr
         MRT3.EOS_SC!(lb)
         MRT3.calculate_force!(lb)
-        MRT3.mrt_collision!(lb)
+        MRT3.mrt_collision3!(lb)
         MRT3.streaming!(lb)
         MRT3.calculate_macro!(lb)
 
@@ -83,8 +83,8 @@ RhoEvolution = run_sim!(lb, Nt, NtScale; show_progress=true, record=true, RhoEvo
 println("Simulation Completed")
 
 # Animate
-frames = 1:1:nframes
-animateDensityEvolution(RhoEvolution, frames)
+#frames = 1:1:nframes
+#animateDensityEvolution(RhoEvolution, frames)
 
 # ---------------------------
 # Optional: Benchmark

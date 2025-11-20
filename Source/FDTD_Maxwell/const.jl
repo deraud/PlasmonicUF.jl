@@ -2,7 +2,8 @@ module Constants_Maxwell
 
 using ..Constants
 
-include(joinpath(@__DIR__, "..", "const.jl"))
+#include(joinpath(@__DIR__, "..", "const.jl"))
+include("C:\\Users\\62812\\OneDrive\\Desktop\\Files\\ITB\\S2\\Nanobubble2\\const.jl")
 
 export λ₀, c0, ω₀, CL, Nt, Nx, Ny, dx, dy, SL, DL, dt_calc, dt_maxwell,
        ϵₒ, μₒ, ϵᵣ,
@@ -45,6 +46,7 @@ const DL::Float64 = 0.0  # Dielectric Location (0 = full dielectric, 1 = no diel
 
 #const dt_calc::Float64 = CL/(c0*sqrt(dx^-2 + dy^-2))
 #const dt::Float64 = floor_to_1_or_5(dt_calc)
+const dt::Float64 = 1e-17
 const dt_calc::Float64 = 0.99/(c0*sqrt(dx^-2 + dy^-2))
 const dtscale::Int = ceil(dt/dt_calc)
 const dt_maxwell::Float64 = dt/dtscale # Time step size for FDTD (s)
