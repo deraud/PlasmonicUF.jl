@@ -7,6 +7,7 @@ using ..Constants_MRT3
 
 export mrt_collision!, streaming!, calculate_macro!
 export mrt_collision3!
+export mrt_collisiona!
 
 function mrt_collision!(lb::Lattice)
     Threads.@threads for i in 1:Nx 

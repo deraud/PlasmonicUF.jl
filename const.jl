@@ -4,9 +4,9 @@ using StaticArrays
 
 export Nx, Ny, Nt, NtScale, CellType
 
-const Nx::Int = 128
-const Ny::Int = 128
-const Nt::Int = 1000
+const Nx::Int = 256
+const Ny::Int = 256
+const Nt::Int = 100
 const NtScale::Int = 1
 
 module CellType

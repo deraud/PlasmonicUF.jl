@@ -9,7 +9,7 @@ using Statistics
 include("./const.jl")
 include("./struct.jl")
 include("./MRT3/MRT3.jl")
-include("./Source/FDTD_Maxwell/FDTD_Maxwell.jl")
+##include("./Source/FDTD_Maxwell/FDTD_Maxwell.jl")
 include("./initialize.jl")
 include("./animate.jl")
 
@@ -18,7 +18,7 @@ using .Constants
 using .Struct
 using .Initialization
 using .MRT3
-using .FDTDMaxwell
+##using .FDTDMaxwell
 using .Animate
 
 """
@@ -79,15 +79,20 @@ MRT3.initialize!(lb)
 
 Initialization.InitializePhase!(phase, 20.0)
 
-# Preallocate output and run
+
 nframes = fld(Nt, NtScale)
 RhoEvolution = zeros(eltype(lb.ρ), Nx, Ny, nframes)
 
-# Warm-up JIT once (not timed)
-#run_sim!(lb, NtScale, NtScale; show_progress=false, record=true, RhoEvolution=RhoEvolution)
 
-# Main run
-#RhoEvolution = run_sim!(lb, Nt, NtScale; show_progress=true, record=true, RhoEvolution=RhoEvolution)
+"""
+    Ultrashort Laser with Finite Difference Time Domain (FDTD)
+"""
+
+"""
+    Fluid Dynamics with MRT LBM
+"""
+run_sim!(lb, NtScale, NtScale; show_progress=false, record=true, RhoEvolution=RhoEvolution)
+RhoEvolution = run_sim!(lb, Nt, NtScale; show_progress=true, record=true, RhoEvolution=RhoEvolution)
 
 
 
